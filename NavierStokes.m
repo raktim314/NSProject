@@ -1,9 +1,10 @@
 
 
 
-%unsteady stokes equation for simple shear flow
-%pressure is not constant
+%unsteady Navier-stokes equation for simple shear flow
+%Solve pressure with projection method
 %SOR method for faster convergent
+%External forces are considered to be zero
 clc;
 clear all;
 close all;
@@ -12,8 +13,8 @@ close all;
 %------------------------------------------------------------------------
 Re = 1;                 %Reynolds Number
 visc=1/Re;              %viscosity
-nx = 8;                 %gridpoints along x
-ny = 8;                 %gridpoints along y
+nx = 16;                 %gridpoints along x
+ny = 16;                 %gridpoints along y
 lx = 1;                 %lenght of the domain
 ly = 1;                 %width of the domain
 ft=0.5;                 %final time
@@ -22,7 +23,7 @@ Maxit=10;              %maximum iteration
 nstep= 100;
 beta=1.2;               %SOR factor
 dt=0.01;               %time step size
-gx =0; gy=0;        %external forces
+
 
 %---------------------------------------------
 %Variable initialization
@@ -104,8 +105,7 @@ for n=1:nstep
             D2_u=((u(i+1,j)-2*u(i,j)+u(i-1,j))/dx^2)+...
                 ((u(i,j+1)-2*u(i,j)+u(i,j-1))/dy^2); %Laplacian operator for u
             ut(i,j)=u(i,j)+dt*(-A+visc*D2_u);
-%             ut(i,j)=u(i,j)+dt*(visc*((u(i+1,j)-2*u(i,j)+u(i-1,j))/dx^2+...
-%                 (u(i,j+1)-2*u(i,j)+u(i,j-1))/dy^2)+gx);
+          
         end
     end
     
@@ -120,8 +120,7 @@ for n=1:nstep
             D2_v=((v(i+1,j)-2*v(i,j)+v(i-1,j))/dx^2)+...
                 ((v(i,j+1)-2*v(i,j)+v(i,j-1))/dy^2); %Laplacian operator for v
             vt(i,j)=v(i,j)+dt*(-B+visc*D2_v);
-%             vt(i,j)=v(i,j)+dt*(visc*((v(i+1,j)-2*v(i,j)+v(i-1,j))/dx^2+...
-%                 (v(i,j+1)-2*v(i,j)+v(i,j-1))/dy^2)+gy);
+            
         end
     end
     %ut
@@ -131,15 +130,11 @@ for n=1:nstep
         p_chk=p;
         for i=2:nx+1
             for j=2:ny+1
-                %p(i,j)=3;
                 p(i,j)= p(i,j) + ...
                           diag*( (1/dx^2)*(p(i+1,j)-2*p(i,j)+p(i-1,j))+ ...
                                  (1/dy^2)*(p(i,j+1)-2*p(i,j)+p(i,j-1)) ...
                 -(Re/dt)*((ut(i,j)-ut(i-1,j))/dx+(vt(i,j)-vt(i,j-1))/dy) );
-%                p(i,j)=beta/(dx^2+dy^2)*(dy^2*(p(i+1,j)+p(i-1,j))...
-%                     +dx^2*(p(i,j+1)+p(i,j-1))-dx*dy^2/dt*(ut(i,j)...
-%                     -ut(i-1,j))-dx^2*dy/dt*(vt(i,j)-vt(i,j-1)))...
-%                     +(1-beta)*p(i,j);
+               
             end
         end
         for i=2:nx+1
@@ -158,7 +153,6 @@ for n=1:nstep
             end
         end
 if Err <= MaxErr, break, end
-        %if max(max(abs(p_chk-p))) <maxError, break, end
     end
   
     
