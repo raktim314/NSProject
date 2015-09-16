@@ -1,6 +1,4 @@
 
-
-
 %unsteady Navier-stokes equation for simple shear flow
 %Solve pressure with projection method
 %SOR method for faster convergent
@@ -11,41 +9,43 @@ close all;
 %-----------------------------------------------------------------------
 %Define all numerial values
 %------------------------------------------------------------------------
-Re = 1;                 %Reynolds Number
-visc=1/Re;              %viscosity
-nx = 16;                 %gridpoints along x
-ny = 16;                 %gridpoints along y
-lx = 1;                 %lenght of the domain
-ly = 1;                 %width of the domain
-ft=0.5;                 %final time
-MaxErr = 0.001;       %maximum error for pressure
-Maxit=10;              %maximum iteration
-nstep= 100;
-beta=1.2;               %SOR factor
-dt=0.01;               %time step size
+Re = 1;                     %Reynolds Number
+visc=1/Re;                  %viscosity
+nx = 64;                    %gridpoints along x
+ny = 64;                    %gridpoints along y
+lx = 1;                     %lenght of the domain
+ly = 1;                     %width of the domain
+ft=0.5;                     %final time
+MaxErr = 0.001;             %maximum error for pressure
+Maxit=10;                   %maximum iteration
+nstep= 100;                 %time step
+beta=1.2;                   %SOR factor
+dt=0.01;                    %time step size
 
 
 %---------------------------------------------
 %Variable initialization
-u = zeros(nx+1,ny+2); ut = zeros(nx+1,ny+2);  %velocity in x direction
-v = zeros(nx+2,ny+1); vt = zeros(nx+2,ny+1);  %velocity in y direction
-p = zeros(nx+2,ny+2);                       %pressure
-tmp1 = zeros(nx+2,ny+2); tmp2 = zeros(nx+2,ny+2); %pressure
-t=0;                                                %Initial time
+u = zeros(nx+1,ny+2); ut = zeros(nx+1,ny+2);    %velocity in x direction
+v = zeros(nx+2,ny+1); vt = zeros(nx+2,ny+1);    %velocity in y direction
+p = zeros(nx+2,ny+2);                           %pressure
+t=0;                                            %Initial time
 %----------------------------------------------------------------------
 %set grid points
-dx=lx/nx; dy=ly/ny;                         %length of the grid cell
+dx=lx/nx; dy=ly/ny;                             %length of the grid cell
 for i = 0:nx+2
     for j = 0:ny+2
         x=dx*(i-1);
         y=dy*(j-1.5);
     end
 end
+
 %-----------------------------------------------------------------------
 %Check to ensure that the defined time step meets stability condition?
 if dt>0.25*(min(dx,dy))^2/visc || dt>(1/Re)
     dt=min((0.25*(min(dx,dy))^2/visc),(visc));
 end
+%-----------------------------------------------------------------------
+%Time integration loop start
 %-----------------------------------------------------------------------
 %Interior nodes
 for n=1:nstep
@@ -61,14 +61,8 @@ for n=1:nstep
         v(i,1)=0;
         v(i,ny+1)=0;
     end
-    %set pressure p (assume pressure is constant & =1)
-%     for i=2:nx+1
-%         for j=2:ny+1
-%             p(i,j)=1;
-%         end
-%     end
-   % p
-    %-------------------------------------------------------------------------
+    
+%-------------------------------------------------------------------------
     %Set boundary conditions
     for i=2:nx+1
         u(i,ny+2)=2-u(i,ny+1);              %at top line
@@ -123,8 +117,7 @@ for n=1:nstep
             
         end
     end
-    %ut
-    %vt
+    
     diag = (0.5/(1/dx^2+1/dy^2));
     for it=1:Maxit
         p_chk=p;
@@ -154,11 +147,11 @@ for n=1:nstep
         end
 if Err <= MaxErr, break, end
     end
-  
-    
-    
-    %update velocities
-    %u velocity
+%-----------------------------------------------------------------------  
+%Update velocities
+%Find the final velocity
+%-----------------------------------------------------------------------
+ %u velocity
     
     for i=2:nx
         for j= 2:ny+1
@@ -170,20 +163,18 @@ if Err <= MaxErr, break, end
         for j= 2:ny
             v(i,j)= vt(i,j)- ((dt/Re)*((p(i,j+1)-p(i,j))/dy));
         end
-    end
+    end 
     u
     v
     p
-end
+end                             %Time integration end 
 
 
 
 
 
 
-        
-        
-
+  
 
         
 
