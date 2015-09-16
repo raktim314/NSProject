@@ -11,8 +11,8 @@ close all;
 %------------------------------------------------------------------------
 Re = 1;                     %Reynolds Number
 visc=1/Re;                  %viscosity
-nx = 64;                    %gridpoints along x
-ny = 64;                    %gridpoints along y
+nx = 16;                    %gridpoints along x
+ny = 16;                    %gridpoints along y
 lx = 1;                     %lenght of the domain
 ly = 1;                     %width of the domain
 ft=0.5;                     %final time
