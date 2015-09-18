@@ -148,6 +148,7 @@ if Err <= MaxErr, break, end
     end
    
 end
+
 %relocate the grid points
 P(1:nx+2,1)=0; P(1:nx+2,ny+2)=0; P(1,1:ny+2)=0; P(nx+2,1:ny+2)=0;
 u_cnt(1:nx+1,1:ny+1)= 1/2 *(u(1:nx+1,1:ny+1)+u(1:nx+1,2:ny+2));
