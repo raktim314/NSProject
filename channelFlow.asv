@@ -208,6 +208,6 @@ y(1:ny+1)=(0:ny);
 figure(1), quiver(x,y,(rot90(fliplr(u_cnt))),(rot90(fliplr(v_cnt)))),...
 xlabel('nx'),ylabel('ny'),title('Velocity Vectour Plot');
 axis([0 nx 0 ny]),axis('square');
-figure(2), contour(x,y,(rot90(fliplr(p)))); colorbar
+figure(2), contour(x,y,(rot90(fliplr(P_)))); colorbar
 
         

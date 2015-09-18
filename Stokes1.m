@@ -16,7 +16,7 @@ ly = 1;                 %width of the domain
 ft=0.5;                 %final time
 MaxErr = 0.001;         %maximum error for pressure
 Maxit=10;              %maximum iteration
-nstep= 1;
+nstep= 25;
 beta=1.2;               %SOR factor
 dt=0.01;               %time step size
 gx =0; gy=0;        %external forces
@@ -73,15 +73,15 @@ for n=1:nstep
     end
     
     
-%     for i=2:nx+1
-%         p(i,ny+2)=6-p(i,ny+1);              %at top
-%         p(i,1)=6-p(i,2);                    %at bottom
-%     end
-%     
-%     for j=2:ny+1
-%         p(nx+2,j)=6-p(nx+1,j);              %at right
-%         p(1,j)=6-p(2,j);                    %at left
-%     end
+    for i=2:nx+1
+        p(i,ny+2)=6-p(i,ny+1);              %at top
+        p(i,1)=6-p(i,2);                    %at bottom
+    end
+    
+    for j=2:ny+1
+        p(nx+2,j)=6-p(nx+1,j);              %at right
+        p(1,j)=6-p(2,j);                    %at left
+    end
     
     %p
     %------------------------------------------------------------
