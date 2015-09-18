@@ -8,14 +8,14 @@ close all;
 %------------------------------------------------------------------------
 Re = 1;                 %Reynolds Number
 visc=1/Re;              %viscosity
-nx = 4;                 %gridpoints along x
-ny = 4;                 %gridpoints along y
+nx = 16;                 %gridpoints along x
+ny = 16;                 %gridpoints along y
 lx = 1;                 %lenght of the domain
 ly = 1;                 %width of the domain
 ft=0.5;                 %final time
 MaxErr = 0.001;       %maximum error for pressure
 Maxit=10;              %maximum iteration
-nstep= 1;
+nstep= 100;
 beta=1.2;               %SOR factor
 dt=0.01;               %time step size
 gx =0; gy=0;        %external forces
@@ -25,7 +25,6 @@ gx =0; gy=0;        %external forces
 u = zeros(nx+1,ny+2); ut = zeros(nx+1,ny+2);  %velocity in x direction
 v = zeros(nx+2,ny+1); vt = zeros(nx+2,ny+1);  %velocity in y direction
 p = zeros(nx+2,ny+2);                       %pressure
-tmp1 = zeros(nx+2,ny+2); tmp2 = zeros(nx+2,ny+2); %pressure
 t=0;                                                %Initial time
 %----------------------------------------------------------------------
 %set grid points
@@ -56,11 +55,9 @@ for n=1:nstep
     end
     
     for i=2:nx+1
-        x=dx*(i-1.5);
         v(i,1)=0;                   %v at bottom edge
         v(i,ny+1)=0;                %v at top edge
     end
-    
     
     for j=2:ny
         v(nx+2,j)=-v(nx+1,j);        %v at right
@@ -77,8 +74,7 @@ for n=1:nstep
         p(nx+2,j)=6-p(nx+1,j);              %at right
         p(1,j)=6-p(2,j);                    %at left
     end
-    u
-    v
+    
     %p
     %------------------------------------------------------------
     %temporary velocity
@@ -105,20 +101,25 @@ for n=1:nstep
         for i=2:nx+1
             for j=2:ny+1
                 %p(i,j)=3;
+                rhs= (1/dt)*((ut(i,j)-ut(i-1,j))/dx...
+                    +(vt(i,j)-vt(i,j-1))/dy);
+                p(i,j)= (1-beta)*p(i,j)+...
+                    beta*diag*( (1/dx^2)*(p(i+1,j)+p(i-1,j))+...
+                    (1/dy^2)*(p(i,j+1)+p(i,j-1))-rhs);
                
-                p(i,j)= p(i,j) + ...
-                          diag*( (1/dx^2)*(p(i+1,j)-2*p(i,j)+p(i-1,j))+ ...
-                                 (1/dy^2)*(p(i,j+1)-2*p(i,j)+p(i,j-1)) ...
-                -(Re/dt)*((ut(i,j)-ut(i-1,j))/dx+(vt(i,j)-vt(i,j-1))/dy) );
+%                 p(i,j)= p(i,j) + ...
+%                           diag*( (1/dx^2)*(p(i+1,j)-2*p(i,j)+p(i-1,j))+ ...
+%                                  (1/dy^2)*(p(i,j+1)-2*p(i,j)+p(i,j-1)) ...
+%                 -(Re/dt)*((ut(i,j)-ut(i-1,j))/dx+(vt(i,j)-vt(i,j-1))/dy) );
             end
         end
         for i=2:nx+1
-            p(i,ny+2)=6-p(i,ny+1);              %at top
-            p(i,1)=6-p(i,2);                    %at bottom
+            p(i,ny+2)= p(i,ny+1);              %at top
+            p(i,1)= -p(i,2);                    %at bottom
         end     
         for j=2:ny+1
-            p(nx+2,j)=6-p(nx+1,j);              %at right
-            p(1,j)=6-p(2,j);                    %at left
+            p(nx+2,j)= p(nx+1,j);              %at right
+            p(1,j)= p(2,j);                    %at left
         end
        Err=0.0;
         for i=2:nx+1
@@ -147,11 +148,22 @@ if Err <= MaxErr, break, end
     end
    
 end
-
-
-
-
-
+%relocate the grid points
+P(1:nx+2,1)=0; P(1:nx+2,ny+2)=0; P(1,1:ny+2)=0; P(nx+2,1:ny+2)=0;
+u_cnt(1:nx+1,1:ny+1)= 1/2 *(u(1:nx+1,1:ny+1)+u(1:nx+1,2:ny+2));
+v_cnt(1:nx+1,1:ny+1)= 1/2 *(v(1:nx+1,1:ny+1)+v(2:nx+2,1:ny+1));
+P_cnt(1:nx+1,1:ny+1)=1/4*(p(1:nx+1,1:ny+1)+p(2:nx+2,1:ny+1)...
+    +p(1:nx+1,2:ny+2)+P(2:nx+2,2:ny+2));
+wt(1:nx+1,1:ny+1)=(v(2:nx+2,1:ny+1)-v(1:nx+1,1:ny+1))/dx...
+    -(u(1:nx+1,2:ny+2)-u(1:nx+1,1:ny+1))/dy;
+x(1:nx+1)=(0:nx)
+y(1:ny+1)=(0:ny)
+%-------------------------------------------------------------------------%
+%Plot the variables
+%-------------------------------------------------------------------------%
+figure(1), quiver(x,y,(rot90(fliplr(u_cnt))),(rot90(fliplr(v_cnt)))),...
+xlabel('nx'),ylabel('ny'),title('Velocity Vectour Plot');
+axis([0 nx 0 ny]),axis('square');
 
         
         
