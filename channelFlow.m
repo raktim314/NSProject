@@ -1,5 +1,4 @@
-%unsteady stokes equation for simple shear flow
-%pressure is not constant
+%Stokes equation for 2D channel for 
 %SOR method for faster convergent
 clc;
 clear all;
@@ -16,7 +15,7 @@ ly = 1;                 %width of the domain
 ft=0.5;                 %final time
 MaxErr = 0.001;         %maximum error for pressure
 Maxit=10;              %maximum iteration
-nstep= 100;
+nstep= 10;
 beta=1.2;               %SOR factor
 dt=0.01;               %time step size
 gx =0; gy=0;        %external forces
@@ -126,7 +125,7 @@ for n=1:nstep
             p(i,1)= p(i,2);                    %at bottom
         end     
         for j=2:ny+1
-            p(nx+2,j)=2*(1-2*visc)-p(nx+1,j);              %at right
+            p(nx+2,j)=2*(1-2*visc)-p(nx+1,j);   %at right
             p(1,j)=2*p(2,j);                    %at left
         end
         
