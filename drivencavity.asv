@@ -8,13 +8,13 @@ close all;
 %------------------------------------------------------------------------
 Re = 1;                 %Reynolds Number
 visc=1/Re;              %viscosity
-nx = 32;                 %gridpoints along x
-ny = 32;                 %gridpoints along y
+nx = 16;                 %gridpoints along x
+ny = 16;                 %gridpoints along y
 lx = 1;                 %lenght of the domain
 ly = 1;                 %width of the domain
 ft=0.5;                 %final time
 MaxErr = 0.001;       %maximum error for pressure
-Maxit=100;              %maximum iteration
+Maxit=10;              %maximum iteration
 nstep= 100;
 beta=1.2;               %SOR factor
 dt=0.01;               %time step size
@@ -185,7 +185,7 @@ y(1:ny+1)=(0:ny)
 figure(1), quiver(x,y,(rot90(fliplr(u_cnt))),(rot90(fliplr(v_cnt)))),...
 xlabel('nx'),ylabel('ny'),title('Velocity Vectour Plot');
 axis([0 nx 0 ny]),axis('square');
-figure(2), contour(x,y,(rot90(fliplr(p_cnt)))); colorbar
+figure(2), contour(x,y,(rot90(fliplr(_cnt)))); colorbar
         
         
 
