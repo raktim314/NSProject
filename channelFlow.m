@@ -8,8 +8,8 @@ close all;
 %------------------------------------------------------------------------
 Re = 1;                 %Reynolds Number
 visc=1/Re;              %viscosity
-nx = 64;                 %gridpoints along x
-ny = 64;                 %gridpoints along y
+nx = 8;                 %gridpoints along x
+ny = 8;                 %gridpoints along y
 lx = 1;                 %lenght of the domain
 ly = 1;                 %width of the domain
 ft=0.5;                 %final time
@@ -96,7 +96,7 @@ for n=1:nstep
         end
     end
     %---------------------------------------------------------------
-    %Update boundary velocities
+    %Update boundary values
     for j=2:ny+1
         y=dy*(j-1.5);
         ut(1,j)= y*(1-y);               %u at left edge
@@ -136,10 +136,12 @@ for n=1:nstep
                     diag*( (1/dx^2)*(p(i+1,j)-2*p(i,j)+p(i-1,j))+ ...
                     (1/dy^2)*(p(i,j+1)-2*p(i,j)+p(i,j-1)) ...
                     -(Re/dt)*((ut(i,j)-ut(i-1,j))/dx...
-                        +(vt(i,j)-vt(i,j-1))/dy) );
+                    +(vt(i,j)-vt(i,j-1))/dy) );
             end
         end
-        for i=2:nx+1
+         if max(max(abs(p_chk-p))) <MaxErr, break, end
+        
+         for i=2:nx+1
             p(i,ny+2)= p(i,ny+1);              %at top
             p(i,1)= p(i,2);                    %at bottom
         end
@@ -147,12 +149,12 @@ for n=1:nstep
             p(nx+2,j)=2*(1-2*visc)-p(nx+1,j);   %at right
             p(1,j)=2-p(2,j);                    %at left
         end
-        if max(max(abs(p_chk-p))) <MaxErr, break, end
+       
         
     end
     
     
-    
+    %------------------------------------------------------------
     %update velocities
     %u velocity
     
@@ -167,6 +169,7 @@ for n=1:nstep
             v(i,j)= vt(i,j)- ((dt/Re)*((p(i,j+1)-p(i,j))/dy));
         end
     end
+    %--------------------------------------------------------------
     for j=2:ny+1
         y=dy*(j-1.5);
         u(1,j)= y*(1-y);               %u at left edge
@@ -188,9 +191,11 @@ for n=1:nstep
         v(1,j)=-v(2,j);              %v at left
         
     end
-    
+    u
+    v
+    p
 end
-
+t=t+dt
 %relocate the grid points
 p(1:nx+2,1)=0; p(1:nx+2,ny+2)=0; p(1,1:ny+2)=0; p(nx+2,1:ny+2)=0;
 u_cnt(1:nx+1,1:ny+1)= 1/2 *(u(1:nx+1,1:ny+1)+u(1:nx+1,2:ny+2));
