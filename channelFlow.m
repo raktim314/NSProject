@@ -8,14 +8,14 @@ close all;
 %------------------------------------------------------------------------
 Re = 1;                 %Reynolds Number
 visc=1/Re;              %viscosity
-nx = 8;                 %gridpoints along x
-ny = 8;                 %gridpoints along y
+nx = 16;                 %gridpoints along x
+ny = 16;                 %gridpoints along y
 lx = 1;                 %lenght of the domain
 ly = 1;                 %width of the domain
 ft=0.5;                 %final time
 MaxErr = 0.001;         %maximum error for pressure
 Maxit=10;              %maximum iteration
-nstep= 100;
+nstep= 200;
 beta=1.2;               %SOR factor
 dt=0.01;               %time step size
 gx =0; gy=0;        %external forces
@@ -77,10 +77,11 @@ for j=2:ny+1
     p(1,j)=2-p(2,j);                    %at left
 end
 
+
+%---------------------------------------------------------------------
+%Temporary velocity
+%---------------------------------------------------------------------
 for n=1:nstep
-    %------------------------------------------------------------
-    %temporary velocity
-    
     for i=2:nx
         for j=2:ny+1
             ut(i,j)=u(i,j)+dt*(visc*((u(i+1,j)-2*u(i,j)+u(i-1,j))/dx^2+...
@@ -95,8 +96,9 @@ for n=1:nstep
                 (v(i,j+1)-2*v(i,j)+v(i,j-1))/dy^2)+gy);
         end
     end
-    %---------------------------------------------------------------
+    %---------------------------------------------------------------------
     %Update boundary values
+    %---------------------------------------------------------------------
     for j=2:ny+1
         y=dy*(j-1.5);
         ut(1,j)= y*(1-y);               %u at left edge
@@ -127,21 +129,29 @@ for n=1:nstep
     end
     %ut
     %vt
+%-----------------------------------------------------------------------
+%Solving Pressure
+%-----------------------------------------------------------------------
     diag = (0.5/(1/dx^2+1/dy^2));
     for it=1:Maxit
         p_chk=p;
         for i=2:nx+1
             for j=2:ny+1
-                p(i,j)=  p(i,j) + ...
-                    diag*( (1/dx^2)*(p(i+1,j)-2*p(i,j)+p(i-1,j))+ ...
-                    (1/dy^2)*(p(i,j+1)-2*p(i,j)+p(i,j-1)) ...
-                    -(Re/dt)*((ut(i,j)-ut(i-1,j))/dx...
-                    +(vt(i,j)-vt(i,j-1))/dy) );
+                rhs= (1/dt)*((ut(i,j)-ut(i-1,j))/dx...
+                    +(vt(i,j)-vt(i,j-1))/dy);
+                        p(i,j)= (1-beta)*p(i,j)+...
+                            beta*diag*( ((1/dx^2)*(p(i+1,j)+p(i-1,j))+...
+                            (1/dy^2)*(p(i,j+1)+p(i,j-1)))-rhs);
+%                 p(i,j)=  p(i,j) + ...
+%                     diag*( (1/dx^2)*(p(i+1,j)-2*p(i,j)+p(i-1,j))+ ...
+%                     (1/dy^2)*(p(i,j+1)-2*p(i,j)+p(i,j-1)) ...
+%                     -(Re/dt)*((ut(i,j)-ut(i-1,j))/dx...
+%                     +(vt(i,j)-vt(i,j-1))/dy) );
             end
         end
-         if max(max(abs(p_chk-p))) <MaxErr, break, end
+        if max(max(abs(p_chk-p))) <MaxErr, break, end
         
-         for i=2:nx+1
+        for i=2:nx+1
             p(i,ny+2)= p(i,ny+1);              %at top
             p(i,1)= p(i,2);                    %at bottom
         end
@@ -149,13 +159,14 @@ for n=1:nstep
             p(nx+2,j)=2*(1-2*visc)-p(nx+1,j);   %at right
             p(1,j)=2-p(2,j);                    %at left
         end
-       
+        
         
     end
     
     
-    %------------------------------------------------------------
-    %update velocities
+    %----------------------------------------------------------------------
+    %update velocity fields
+    %----------------------------------------------------------------------
     %u velocity
     
     for i=2:nx
@@ -169,7 +180,7 @@ for n=1:nstep
             v(i,j)= vt(i,j)- ((dt/Re)*((p(i,j+1)-p(i,j))/dy));
         end
     end
-    %--------------------------------------------------------------
+    %--------------------------------------------------------------------
     for j=2:ny+1
         y=dy*(j-1.5);
         u(1,j)= y*(1-y);               %u at left edge
@@ -195,13 +206,13 @@ for n=1:nstep
     v
     p
 end
-t=t+dt
+%t=t+dt
 %relocate the grid points
-%p(1:nx+2,1)=0; p(1:nx+2,ny+2)=0; p(1,1:ny+2)=0; p(nx+2,1:ny+2)=0;
+p(1:nx+2,1)=0; p(1:nx+2,ny+2)=0; p(1,1:ny+2)=0; p(nx+2,1:ny+2)=0;
 u_cnt(1:nx+1,1:ny+1)= 0.5 *(u(1:nx+1,1:ny+1)+u(1:nx+1,2:ny+2));
 v_cnt(1:nx+1,1:ny+1)= 0.5 *(v(1:nx+1,1:ny+1)+v(2:nx+2,1:ny+1));
-%p_cnt(1:nx+1,1:ny+1)=0.25*(p(1:nx+1,1:ny+1)+p(2:nx+2,1:ny+1)...
- %   +p(1:nx+1,2:ny+2)+p(2:nx+2,2:ny+2));
+p_cnt(1:nx+1,1:ny+1)=0.25*(p(1:nx+1,1:ny+1)+p(2:nx+2,1:ny+1)...
+    +p(1:nx+1,2:ny+2)+p(2:nx+2,2:ny+2));
 wt(1:nx+1,1:ny+1)=(v(2:nx+2,1:ny+1)-v(1:nx+1,1:ny+1))/dx...
     -(u(1:nx+1,2:ny+2)-u(1:nx+1,1:ny+1))/dy;
 x(1:nx+1)=(0:nx)
@@ -212,5 +223,6 @@ y(1:ny+1)=(0:ny)
 figure(1), quiver(x,y,(rot90(fliplr(u_cnt))),(rot90(fliplr(v_cnt)))),...
     xlabel('nx'),ylabel('ny'),title('Velocity Vectour Plot');
 axis([0 nx 0 ny]),axis('square');
-figure(2), contour(x,y,flipud(rot90(p))),axis equal, axis([0 lx 0 ly]); colorbar
+%figure(2), contour(x,y,flipud(rot90(p))),axis equal, axis([0 lx 0 ly]); colorbar
+figure(2), contour(x,y,(rot90(fliplr(p_cnt)))); colorbar
 

@@ -9,8 +9,8 @@ close all;
 %------------------------------------------------------------------------
 Re = 1;                 %Reynolds Number
 visc=1/Re;              %viscosity
-nx = 32;                 %gridpoints along x
-ny = 32;                 %gridpoints along y
+nx = 16;                 %gridpoints along x
+ny = 16;                 %gridpoints along y
 lx = 1;                 %lenght of the domain
 ly = 1;                 %width of the domain
 ft=0.5;                 %final time
@@ -83,10 +83,10 @@ for j=2:ny+1
     p(1,j)=6-p(2,j);                    %at left
 end
 
-%-----------------------------------------------------------
+%------------------------------------------------------------------------
+%temporary velocity
+%-----------------------------------------------------------------------
 for n=1:nstep
-    %------------------------------------------------------------
-    %temporary velocity
     
     for i=2:nx                              %Tempprary u velocity
         for j=2:ny+1
@@ -103,6 +103,7 @@ for n=1:nstep
     end
     %------------------------------------------------------------------
     %update boundary velociteis
+    %------------------------------------------------------------------
     for j=2:ny+1
         y=dy*(j-1.5);
         ut(1,j)=2*y-1;               %u at left edge
@@ -128,7 +129,14 @@ for n=1:nstep
         vt(1,j)=-vt(2,j);              %v at left
         
     end
-    
+    for i=2:nx+1
+        p(i,ny+2)=6-p(i,ny+1);              %at top
+        p(i,1)=6-p(i,2);                    %at bottom
+    end
+    for j=2:ny+1
+        p(nx+2,j)=6-p(nx+1,j);              %at right
+        p(1,j)=6-p(2,j);                    %at left
+    end
     %-------------------------------------------------------------------
     %Compute Pressure
     diag = (0.5/(1/dx^2+1/dy^2));
@@ -139,12 +147,12 @@ for n=1:nstep
                 p(i,j)=  p(i,j) + ...
                     diag*( (1/dx^2)*(p(i+1,j)-2*p(i,j)+p(i-1,j))+ ...
                     (1/dy^2)*(p(i,j+1)-2*p(i,j)+p(i,j-1)) ...
-                    -(Re/dt)*((ut(i,j)-ut(i-1,j))/dx+(vt(i,j)-vt(i,j-1))/dy) );
-                %                         rhs= (1/dt)*((ut(i,j)-ut(i-1,j))/dx...
-                %                             +(vt(i,j)-vt(i,j-1))/dy);
-                %                         p(i,j)= (1-beta)*p(i,j)+...
-                %                             beta*diag*( (1/dx^2)*(p(i+1,j)+p(i-1,j))+...
-                %                             (1/dy^2)*(p(i,j+1)+p(i,j-1))-rhs);
+               -(Re/dt)*((ut(i,j)-ut(i-1,j))/dx+(vt(i,j)-vt(i,j-1))/dy) );
+%                         rhs= (1/dt)*((ut(i,j)-ut(i-1,j))/dx...
+%                             +(vt(i,j)-vt(i,j-1))/dy);
+%                         p(i,j)= (1-beta)*p(i,j)+...
+%                             beta*diag*( (1/dx^2)*(p(i+1,j)+p(i-1,j))+...
+%                             (1/dy^2)*(p(i,j+1)+p(i,j-1))-rhs);
             end
         end
         if max(max(abs(p_chk-p))) <MaxErr, break, end
@@ -161,9 +169,9 @@ for n=1:nstep
         
         
     end
-%------------------------------------------------------------------------%
-    %update boundary velocities
-%------------------------------------------------------------------------%
+%-------------------------------------------------------------------%
+    %update velocity field
+%------------------------------------------------------------------%
     %u velocity
     
     for i=2:nx
@@ -177,6 +185,9 @@ for n=1:nstep
             v(i,j)= vt(i,j)- ((dt/Re)*((p(i,j+1)-p(i,j))/dy));
         end
     end
+%----------------------------------------------------------------------
+%Update boundary values for valocities
+%----------------------------------------------------------------------
     for j=2:ny+1
         y=dy*(j-1.5);
         u(1,j)=2*y-1;               %u at left edge
@@ -207,7 +218,7 @@ for n=1:nstep
     p
     
 end
-% % 
+% %
 % %relocate the grid points
 % %p(1:nx+2,1)=0; p(1:nx+2,ny+2)=0; p(1,1:ny+2)=0; p(nx+2,1:ny+2)=0;
 % u_cnt(1:nx+1,1:ny+1)= 1/2 *(u(1:nx+1,1:ny+1)+u(1:nx+1,2:ny+2));
