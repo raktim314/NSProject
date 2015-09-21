@@ -9,8 +9,8 @@ close all;
 %------------------------------------------------------------------------
 Re = 1;                 %Reynolds Number
 visc=1/Re;              %viscosity
-nx = 16;                 %gridpoints along x
-ny = 16;                 %gridpoints along y
+nx = 4;                 %gridpoints along x
+ny = 4;                 %gridpoints along y
 lx = 1;                 %lenght of the domain
 ly = 1;                 %width of the domain
 ft=0.5;                 %final time
@@ -217,30 +217,34 @@ for n=1:nstep
     v
     p
     
+
 end
 % %
-% %relocate the grid points
-% %p(1:nx+2,1)=0; p(1:nx+2,ny+2)=0; p(1,1:ny+2)=0; p(nx+2,1:ny+2)=0;
-% u_cnt(1:nx+1,1:ny+1)= 1/2 *(u(1:nx+1,1:ny+1)+u(1:nx+1,2:ny+2));
-% v_cnt(1:nx+1,1:ny+1)= 1/2 *(v(1:nx+1,1:ny+1)+v(2:nx+2,1:ny+1));
-% p_cnt(1:nx+1,1:ny+1)=1/4*(p(1:nx+1,1:ny+1)+p(2:nx+2,1:ny+1)...
-%     +p(1:nx+1,2:ny+2)+p(2:nx+2,2:ny+2));
-% wt(1:nx+1,1:ny+1)=(v(2:nx+2,1:ny+1)-v(1:nx+1,1:ny+1))/dx...
-%     -(u(1:nx+1,2:ny+2)-u(1:nx+1,1:ny+1))/dy;
-% x(1:nx+1)=(0:nx);
-% y(1:ny+1)=(0:ny);
-% %-------------------------------------------------------------------------%
-% %Plot the variables
-% %-------------------------------------------------------------------------%
-% figure(1), quiver(x,y,(rot90(fliplr(u_cnt))),(rot90(fliplr(v_cnt)))),...
-% xlabel('nx'),ylabel('ny'),title('Velocity Vectour Plot');
-% axis([0 nx 0 ny]),axis('square');
-% figure(2), contour(x,y,(rot90(fliplr(p_cnt)))); colorbar
-% % figure(1), plot(u(floor(nx/2),1:ny+1),1:ny+1)
-% % hold on;
-% % figure(2), plot(1:nx+1,v(1:nx+1, floor(ny/2)))
-% % hold on;
-% % hold on;
+%relocate the grid points
+p(1:nx+2,1)=0; p(1:nx+2,ny+2)=0; p(1,1:ny+2)=0; p(nx+2,1:ny+2)=0;
+u_cnt(1:nx+1,1:ny+1)= 1/2 *(u(1:nx+1,1:ny+1)+u(1:nx+1,2:ny+2));
+v_cnt(1:nx+1,1:ny+1)= 1/2 *(v(1:nx+1,1:ny+1)+v(2:nx+2,1:ny+1));
+p_cnt(1:nx+1,1:ny+1)=1/4*(p(1:nx+1,1:ny+1)+p(2:nx+2,1:ny+1)...
+    +p(1:nx+1,2:ny+2)+p(2:nx+2,2:ny+2));
+wt(1:nx+1,1:ny+1)=(v(2:nx+2,1:ny+1)-v(1:nx+1,1:ny+1))/dx...
+    -(u(1:nx+1,2:ny+2)-u(1:nx+1,1:ny+1))/dy;
+x(1:nx+1)=(0:nx);
+y(1:ny+1)=(0:ny);
+%-------------------------------------------------------------------------%
+%Plot the variables
+%-------------------------------------------------------------------------%
+figure(1), quiver(x,y,(rot90(fliplr(u_cnt))),(rot90(fliplr(v_cnt)))),...
+xlabel('nx'),ylabel('ny'),title('Velocity Vectour Plot');
+axis([0 nx 0 ny]),axis('square');
+figure(2), contour(x,y,(rot90(fliplr(p_cnt)))); colorbar
+ figure(1), plot(u(floor(nx/2),1:ny+1),1:ny+1,'p'),title('u velocity');
+hold on;
+figure(1), plot(u(floor(nx/2),1:ny+1),1:ny+1, '--');
+hold on
+grid on
+% figure(2), plot(1:nx+1,v(1:nx+1, floor(ny/2)))
+% hold on;
+% hold on;
 
 
 
