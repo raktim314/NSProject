@@ -8,8 +8,8 @@ close all;
 %------------------------------------------------------------------------
 Re = 1;                 %Reynolds Number
 visc=1/Re;              %viscosity
-nx = 8;                 %gridpoints along x
-ny = 8;                 %gridpoints along y
+nx = 16;                 %gridpoints along x
+ny = 16;                 %gridpoints along y
 lx = 1;                 %lenght of the domain
 ly = 1;                 %width of the domain
 ft=0.5;                 %final time
@@ -202,13 +202,13 @@ for n=1:nstep
         v(1,j)=-v(2,j);              %v at left
         
     end
-    u
-    v
-    p
+%     u
+%     v
+%     p
 end
 %t=t+dt
 %relocate the grid points
-p(1:nx+2,1)=0; p(1:nx+2,ny+2)=0; p(1,1:ny+2)=0; p(nx+2,1:ny+2)=0;
+%p(1:nx+2,1)=0; p(1:nx+2,ny+2)=0; p(1,1:ny+2)=0; p(nx+2,1:ny+2)=0;
 u_cnt(1:nx+1,1:ny+1)= 0.5 *(u(1:nx+1,1:ny+1)+u(1:nx+1,2:ny+2));
 v_cnt(1:nx+1,1:ny+1)= 0.5 *(v(1:nx+1,1:ny+1)+v(2:nx+2,1:ny+1));
 p_cnt(1:nx+1,1:ny+1)=0.25*(p(1:nx+1,1:ny+1)+p(2:nx+2,1:ny+1)...
@@ -221,8 +221,10 @@ y(1:ny+1)=(0:ny)
 %Plot the variables
 %-------------------------------------------------------------------------%
 figure(1), quiver(x,y,(rot90(fliplr(u_cnt))),(rot90(fliplr(v_cnt)))),...
-    xlabel('nx'),ylabel('ny'),title('Velocity Vectour Plot');
+xlabel('nx'),ylabel('ny'),title('Velocity Vectour Plot');
 axis([0 nx 0 ny]),axis('square');
-%figure(2), contour(x,y,flipud(rot90(p))),axis equal, axis([0 lx 0 ly]); colorbar
 figure(2), contour(x,y,(rot90(fliplr(p_cnt)))); colorbar
-
+ figure(3), plot(u(floor(nx/2),2:ny+1),2:ny+1,'p'),title('u velocity');
+hold on;
+figure(3), plot(u(floor(nx/2),2:ny+1),2:ny+1, '--');
+hold on
