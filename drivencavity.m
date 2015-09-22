@@ -179,13 +179,12 @@ end
         end
     end
  
- end
+    end
 t =t+dt
 %relocate the grid points
-%p(1:nx+2,1)=0; p(1:nx+2,ny+2)=0; p(1,1:ny+2)=0; p(nx+2,1:ny+2)=0;
-u_cnt(1:nx+1,1:ny+1)= 1/2 *(u(1:nx+1,1:ny+1)+u(1:nx+1,2:ny+2));
-v_cnt(1:nx+1,1:ny+1)= 1/2 *(v(1:nx+1,1:ny+1)+v(2:nx+2,1:ny+1));
-p_cnt(1:nx+1,1:ny+1)=1/4*(p(1:nx+1,1:ny+1)+p(2:nx+2,1:ny+1)...
+u_avr(1:nx+1,1:ny+1)= 1/2 *(u(1:nx+1,1:ny+1)+u(1:nx+1,2:ny+2));
+v_avr(1:nx+1,1:ny+1)= 1/2 *(v(1:nx+1,1:ny+1)+v(2:nx+2,1:ny+1));
+p_avr(1:nx+1,1:ny+1)=1/4*(p(1:nx+1,1:ny+1)+p(2:nx+2,1:ny+1)...
     +p(1:nx+1,2:ny+2)+p(2:nx+2,2:ny+2));
 wt(1:nx+1,1:ny+1)=(v(2:nx+2,1:ny+1)-v(1:nx+1,1:ny+1))/dx...
     -(u(1:nx+1,2:ny+2)-u(1:nx+1,1:ny+1))/dy;
@@ -194,37 +193,32 @@ y(1:ny+1)=(0:ny);
 % %-------------------------------------------------------------------------%
 % %Plot the variables
 % %-------------------------------------------------------------------------%
-% figure(1), quiver(x,y,(rot90(fliplr(u_cnt))),(rot90(fliplr(v_cnt)))),...
+% figure(1), quiver(x,y,(rot90(fliplr(u_avr))),(rot90(fliplr(v_avr)))),...
 % xlabel('nx'),ylabel('ny'),title('Velocity Vectour Plot for Grid size 16x16');
 % axis([0 nx 0 ny]),axis
 % ('square');
 % figure(2),
-% subplot(211), contourf(x,y,rot90(fliplr(u_cnt)),30),...
+% subplot(211), contourf(x,y,rot90(fliplr(u_avr)),30),...
 % xlabel('nx'),ylabel('ny'),title('u-velocity for 32x32 grid'); axis('square','tight'); colorbar
-% subplot(212), contourf(x,y,rot90(fliplr(v_cnt)),30),...
+% subplot(212), contourf(x,y,rot90(fliplr(v_avr)),30),...
 % xlabel('nx'),ylabel('ny'),title('v-velocity for 32x32 grid'); axis('square','tight'); colorbar
 % figure(3),
-% subplot(211), contourf(x,y,rot90(fliplr(p_cnt)),30),...
+% subplot(211), contourf(x,y,rot90(fliplr(p_avr)),30),...
 % xlabel('nx'),ylabel('ny'),title('Pressure for 32x32 grid'); axis('square','tight'); colorbar
 % subplot(212), contourf(x,y,rot90(fliplr(wt)),30),...
 % xlabel('nx'),ylabel('ny'),title('Vorticity for 32x32 grid') ;axis('square','tight'); colorbar
-% figure(1), quiver(x,y,(rot90(fliplr(u_cnt))),(rot90(fliplr(v_cnt)))),...
-% xlabel('nx'),ylabel('ny'),title('Velocity Vectour Plot');
-% axis([0 nx 0 ny]),axis('square');
- figure(2), contour(x,y,(rot90(fliplr(p_cnt)))); colorbar
-figure(1), plot(u(floor(nx/2),1:ny+1),1:ny+1, 'r')
-hold on;
-figure(1), plot(u(floor(nx/2),1:ny+1),1:ny+1, 'o')
+figure(1), quiver(x,y,(rot90(fliplr(u_avr))),(rot90(fliplr(v_avr)))),...
+xlabel('nx'),ylabel('ny'),title('Velocity Vectour Plot');
+axis([0 nx 0 ny]),axis('square');
+ figure(2), contour(x,y,(rot90(fliplr(p_avr)))); colorbar
+figure(3), plot(u(floor(nx/2),2:ny+1),2:ny+1, 'or'),title('u velocity');
 xlabel('u')
 ylabel('y')
 hold on
-figure(3), plot(1:nx+1,v(1:nx+1, floor(ny/2)), 'g')
-hold on;
-figure(3), plot(1:nx+1,v(1:nx+1, floor(ny/2)), 's')
+figure(4), plot(1:nx+1,v(1:nx+1, floor(ny/2)), 'ob'),title('v-velocity')
 xlabel('x')
 ylabel('v')
-hold on;  
-%streamline(u_cnt,v_cnt);
+hold on;
         
 
 
