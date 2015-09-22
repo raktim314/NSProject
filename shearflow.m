@@ -9,14 +9,14 @@ close all;
 %------------------------------------------------------------------------
 Re = 1;                 %Reynolds Number
 visc=1/Re;              %viscosity
-nx = 8;                 %gridpoints along x
-ny = 8;                 %gridpoints along y
+nx = 4;                 %gridpoints along x
+ny = 4;                 %gridpoints along y
 lx = 1;                 %lenght of the domain
 ly = 1;                 %width of the domain
 ft=0.5;                 %final time
 MaxErr = 0.001;         %maximum error for pressure
 Maxit=10;              %maximum iteration
-nstep= 400;
+nstep= 100;
 beta=1.2;               %SOR factor
 dt=0.01;               %time step size
 gx =0; gy=0;        %external forces
