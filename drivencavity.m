@@ -8,14 +8,14 @@ close all;
 %------------------------------------------------------------------------
 Re = 1;                 %Reynolds Number
 visc=1/Re;              %viscosity
-nx = 16;                 %gridpoints along x
-ny = 16;                 %gridpoints along y
+nx = 64;                 %gridpoints along x
+ny = 64;                 %gridpoints along y
 lx = 1;                 %lenght of the domain
 ly = 1;                 %width of the domain
 ft=0.5;                 %final time
 MaxErr = 0.001;       %maximum error for pressure
 Maxit=100;              %maximum iteration
-nstep= 100;
+nstep= 1000;
 beta=1.2;               %SOR factor
 dt=0.01;               %time step size
 gx =0; gy=0;        %external forces
@@ -207,18 +207,19 @@ y(1:ny+1)=(0:ny);
 % xlabel('nx'),ylabel('ny'),title('Pressure for 32x32 grid'); axis('square','tight'); colorbar
 % subplot(212), contourf(x,y,rot90(fliplr(wt)),30),...
 % xlabel('nx'),ylabel('ny'),title('Vorticity for 32x32 grid') ;axis('square','tight'); colorbar
-figure(1), quiver(x,y,(rot90(fliplr(u_avr))),(rot90(fliplr(v_avr)))),...
-xlabel('nx'),ylabel('ny'),title('Velocity Vectour Plot');
-axis([0 nx 0 ny]),axis('square');
- figure(2), contour(x,y,(rot90(fliplr(p_avr)))); colorbar
-figure(3), plot(u(floor(nx/2),2:ny+1),2:ny+1, 'or'),title('u velocity');
-xlabel('u')
-ylabel('y')
-hold on
-figure(4), plot(1:nx+1,v(1:nx+1, floor(ny/2)), 'ob'),title('v-velocity')
-xlabel('x')
-ylabel('v')
-hold on;
+% figure(1), quiver(x,y,(rot90(fliplr(u_avr))),(rot90(fliplr(v_avr)))),...
+% xlabel('nx'),ylabel('ny'),title('Velocity Vectour Plot');
+%axis([0 nx 0 ny]),axis('square');
+ figure(2), contour(x,y,(rot90(fliplr(p_avr)))),...
+     title('pressue for grid size 32x32 '); colorbar
+% figure(3), plot(u(floor(nx/2),2:ny+1),2:ny+1, 'or-'),title('u velocity');
+% xlabel('u')
+% ylabel('y')
+% hold on
+% figure(4), plot(1:nx+1,v(1:nx+1, floor(ny/2)), 'ob-'),title('v-velocity')
+% xlabel('x')
+% ylabel('v')
+% hold on;
         
 
 
