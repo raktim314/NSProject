@@ -9,14 +9,14 @@ close all;
 %------------------------------------------------------------------------
 Re = 1;                 %Reynolds Number
 visc=1/Re;              %viscosity
-nx = 4;                 %gridpoints along x
-ny = 4;                 %gridpoints along y
+nx = 16;                 %gridpoints along x
+ny = 16;                 %gridpoints along y
 lx = 1;                 %lenght of the domain
 ly = 1;                 %width of the domain
 ft=0.5;                 %final time
 MaxErr = 0.001;         %maximum error for pressure
 Maxit=10;              %maximum iteration
-nstep= 100;
+nstep= 300;
 beta=1.2;               %SOR factor
 dt=0.01;               %time step size
 gx =0; gy=0;        %external forces
@@ -251,30 +251,30 @@ e_v
 e_p
 
 %-------------------------------------------------------------------
-% %relocate the grid points
-% u_avr(1:nx+1,1:ny+1)= 1/2 *(u(1:nx+1,1:ny+1)+u(1:nx+1,2:ny+2));
-% v_avr(1:nx+1,1:ny+1)= 1/2 *(v(1:nx+1,1:ny+1)+v(2:nx+2,1:ny+1));
-% p_avr(1:nx+1,1:ny+1)=1/4*(p(1:nx+1,1:ny+1)+p(2:nx+2,1:ny+1)...
-%     +p(1:nx+1,2:ny+2)+p(2:nx+2,2:ny+2));
-% wt(1:nx+1,1:ny+1)=(v(2:nx+2,1:ny+1)-v(1:nx+1,1:ny+1))/dx...
-%     -(u(1:nx+1,2:ny+2)-u(1:nx+1,1:ny+1))/dy;
-% x(1:nx+1)=(0:nx);
-% y(1:ny+1)=(0:ny);
-% %-------------------------------------------------------------------------%
-% %Plot the variables
-% %-------------------------------------------------------------------------%
-% figure(1), quiver(x,y,(rot90(fliplr(u_avr))),(rot90(fliplr(v_avr)))),...
-% xlabel('nx'),ylabel('ny'),title('Velocity Vectour Plot');
-% axis([0 nx 0 ny]),axis('square');
-% figure(2), contour(x,y,(rot90(fliplr(p_avr)))); colorbar
-%  figure(3), plot(u(floor(nx/2),2:ny+1),2:ny+1,'-.ro'),title('u velocity');
+%relocate the grid points
+u_avr(1:nx+1,1:ny+1)= 1/2 *(u(1:nx+1,1:ny+1)+u(1:nx+1,2:ny+2));
+v_avr(1:nx+1,1:ny+1)= 1/2 *(v(1:nx+1,1:ny+1)+v(2:nx+2,1:ny+1));
+p_avr(1:nx+1,1:ny+1)=1/4*(p(1:nx+1,1:ny+1)+p(2:nx+2,1:ny+1)...
+    +p(1:nx+1,2:ny+2)+p(2:nx+2,2:ny+2));
+wt(1:nx+1,1:ny+1)=(v(2:nx+2,1:ny+1)-v(1:nx+1,1:ny+1))/dx...
+    -(u(1:nx+1,2:ny+2)-u(1:nx+1,1:ny+1))/dy;
+x(1:nx+1)=(0:nx);
+y(1:ny+1)=(0:ny);
+%-------------------------------------------------------------------------%
+%Plot the variables
+%-------------------------------------------------------------------------%
+figure(1), quiver(x,y,(rot90(fliplr(u_avr))),(rot90(fliplr(v_avr)))),...
+xlabel('nx'),ylabel('ny'),title('Velocity Vectour Plot for Shear Flow');
+axis([0 nx 0 ny]),axis('square');
+figure(2), contour(x,y,(rot90(fliplr(p_avr)))); colorbar
+ figure(3), plot(u(floor(nx/2),2:ny+1),2:ny+1,'-.ro'),title('u velocity');
+hold on;
+%figure(3), plot(u(floor(nx/2),2:ny+1),2:ny+1, '-'),title('u velocity');
+hold on
+grid on
+% figure(4), plot(1:nx+1,v(1:nx+1, floor(ny/2)))
 % hold on;
-% %figure(3), plot(u(floor(nx/2),2:ny+1),2:ny+1, '-'),title('u velocity');
-% hold on
-% grid on
-% % figure(4), plot(1:nx+1,v(1:nx+1, floor(ny/2)))
-% % hold on;
-% % hold on;
+% hold on;
 % 
 % 
 % 
